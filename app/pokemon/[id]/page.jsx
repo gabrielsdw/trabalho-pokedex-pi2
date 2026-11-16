@@ -1,21 +1,20 @@
-// /app/pokemon/[id]/page.jsx
-import FUllPokemon from "@/components/FullPokemon"
+import FullPokemon from "@/components/FullPokemon"
 import pool from '@/lib/db'
+import { notFound } from 'next/navigation'
+
+export const dynamic = 'force-dynamic'
 
 export default async function PokemonPage({ params }) {
-    let parameters = await params
-    let id = parameters.id
-    const [rows] = await pool.query('SELECT * FROM pokemon WHERE id = ?', [id])
-    console.log(rows)
-    // Pegar as informações deste pokemon
-    // e montar uma página completa
-    // https://pokemon.danielpimentel.com.br/v1/pokemon/numero/15
-    
+    const { id } = await params
+    const numero = Number(id)
+
+    if (!Number.isInteger(numero) || numero < 1) notFound()
+
+    const [rows] = await pool.query('SELECT * FROM pokemon WHERE numero = ?', [numero])
+
+    if (!rows[0]) notFound()
+
     return (
-        <div>
-            ID: {id}<br />
-            NOME: {rows[0].nome}
-            <FUllPokemon numero={id} />
-        </div>
+        <FullPokemon pokemon={rows[0]} />
     )
 }

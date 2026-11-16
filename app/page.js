@@ -10,6 +10,7 @@ export default function Home() {
   let [regioes, setRegioes] = useState([])
 
   let [pokemons, setPokemons] = useState([])
+  let [favoritos, setFavoritos] = useState([])
 
   // Irá gerenciar as nossas rotas
   let router = useRouter()
@@ -24,6 +25,22 @@ export default function Home() {
     }
     getRegioes()
   },[])
+
+  useEffect(() => {
+    async function getFavoritos() {
+      try {
+        const resposta = await fetch('/api/favoritos')
+        if (!resposta.ok) return
+
+        const dados = await resposta.json()
+        setFavoritos(dados.numeros)
+      } catch (erro) {
+        console.error('Não foi possível carregar os favoritos', erro)
+      }
+    }
+
+    getFavoritos()
+  }, [])
 
   // chama toda vez que variavel região é alterada
   useEffect(()=>{
@@ -47,6 +64,21 @@ export default function Home() {
     router.push(`/pokemon/${id}`)
   }
 
+  async function onFavorite(numero, favorito) {
+    const resposta = await fetch('/api/favoritos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numero, favorito }),
+    })
+
+    if (!resposta.ok) return
+
+    setFavoritos((lista) => favorito
+      ? [...lista, numero]
+      : lista.filter((item) => item !== numero)
+    )
+  }
+
 // map aplica uma operação ou funcao para todos os elementos de um conjunto 
 // SPA - Single Page Application
   return (
@@ -64,6 +96,9 @@ export default function Home() {
         <li>
           <Link href="/sobre">Sobre</Link>
         </li>
+        <li>
+          <Link href="/favoritos">Favoritos</Link>
+        </li>
       </ul>
 
       <div className="mt-6">
@@ -75,7 +110,12 @@ export default function Home() {
         <div className="flex gap-4 flex-wrap">
           {pokemons.map((item) => (
             <CardPokemon key={
-              'poke_'+item.numero} pokemon={item} onRemove={onRemove} onSelected={onPokemonClicked}
+              'poke_'+item.numero}
+              pokemon={item}
+              favorito={favoritos.includes(item.numero)}
+              onFavorite={onFavorite}
+              onRemove={onRemove}
+              onSelected={onPokemonClicked}
             />
           ))}
         </div>
