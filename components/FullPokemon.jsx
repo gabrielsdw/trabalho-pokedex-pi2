@@ -18,7 +18,7 @@ export default function FullPokemon({ pokemon }) {
 
     return (
         <main className="max-w-3xl mx-auto p-6">
-            <Link href="/" className="text-sky-600 font-semibold">← Voltar para a lista</Link>
+            <Link href="/" className="text-sky-600 font-semibold">Voltar para a lista</Link>
 
             <section className="mt-6 border border-sky-800 rounded-xl p-6">
                 <div className="flex flex-col sm:flex-row items-center gap-6">

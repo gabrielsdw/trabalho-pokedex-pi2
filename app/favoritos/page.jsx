@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import pool from '@/lib/db'
 
-export const dynamic = 'force-dynamic'
-
 export default async function FavoritosPage() {
   const [pokemons] = await pool.query('SELECT * FROM pokemon WHERE favorito = 1 ORDER BY numero')
 

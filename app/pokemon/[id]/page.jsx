@@ -2,8 +2,6 @@ import FullPokemon from "@/components/FullPokemon"
 import pool from '@/lib/db'
 import { notFound } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
 export default async function PokemonPage({ params }) {
     const { id } = await params
     const numero = Number(id)
